@@ -1,0 +1,30 @@
+.w-12 {
+    width: 12%;
+}
+
+.flex {
+    display: flex;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.w-24 {
+    width: 24%;
+}
+
+.w-48 {
+    width: 48%;
+}
+
+.w-6 {
+    width: 6%;
+}
+
+.border {
+    border: 1px solid black;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 5px;
+}
