@@ -47,11 +47,6 @@ python3 app.py
 -   Multiple models were built and tested to determine the best model for predicting game outcomes.
 -   Full model evaluation is available in model.ipynb
 
-# Team Information
-
--   A mapping is created to link team IDs with team names.
--   Average statistics are calculated per team based on historical data for input into the predictions.
-
 # Callbacks for Interactivity:
 
 -   **predict1v1**: Predicts the likelihood of one team winning against another in a hypothetical match based on their average historical stats.
