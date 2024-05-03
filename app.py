@@ -85,7 +85,9 @@ teams_options = [{"label": team, "value": team} for team in teams]
 # app layout
 app.layout = html.Div(
     [
-        html.H1("March Madness Predictor", className="center"),
+        html.H1(
+            "Interactive NCAA Tournament Probability Dashboard", className="center"
+        ),
         html.Div(
             [
                 html.Div(
