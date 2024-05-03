@@ -21,7 +21,6 @@ server = app.server
 
 # build the model
 features = [
-    "Assists",
     "Assists Turnover Ratio",
     "Bench Points",
     "Biggest Lead",
@@ -34,9 +33,7 @@ features = [
     "Free Throws Percentage",
     "Lead Changes",
     "Offensive Points Per Possession",
-    "Rebounds Defensive",
-    "Rebounds Offensive",
-    "Rebounds Total",
+    "Points Second Chance",
     "Second Chance Points Percentage",
     "Steals",
     "Three Pointers Percentage",
@@ -54,7 +51,7 @@ X_train, X_test, y_train, y_test = train_test_split(
     test_size=0.25,
 )
 
-# initialize the RandomForest Classifier
+# initialize the Linear Regression model
 model = LinearRegression()
 model.fit(X_train, y_train)
 
@@ -88,9 +85,16 @@ teams_options = [{"label": team, "value": team} for team in teams]
 # app layout
 app.layout = html.Div(
     [
-        html.H1("March Madness Predictor"),
-        html.Div("The model is a Linear Regression model trained on the cleaned data."),
-        html.Div(f"Model Accuracy: {accuracy}, Mean Squared Error: {mse}"),
+        html.H1("March Madness Predictor", className="center"),
+        html.Div(
+            [
+                html.Div(
+                    "The model is a Linear Regression model trained on the cleaned data and fine tuned to have the most accurate predictions."
+                ),
+                html.Div(f"Model Accuracy: {accuracy}, Mean Squared Error: {mse}"),
+            ],
+            className="border",
+        ),
         html.Div(
             [
                 html.H3("Select two teams to predict the outcome of a match"),
@@ -506,6 +510,7 @@ app.layout = html.Div(
                     className="flex justify-between",
                 ),
                 html.Div(id="championship-game-output"),
+                dcc.Graph(id="championship-game-graph"),
             ],
             className="border",
         ),
@@ -526,9 +531,15 @@ def predict1v1(team1, team2):
     prediction2 = model.predict(input_row2[features])
     total = prediction1[0] + prediction2[0]
     if prediction1[0] > prediction2[0]:
-        return f"{team1} is more likely to win. With a win percentage of {prediction1[0]/total}"
+        output = [
+            f"{team1} is more likely to win. With a win percentage of {prediction1[0]/total}"
+        ]
+        return [html.P(out, className="center") for out in output]
     else:
-        return f"{team2} is more likely to win. With a win percentage of {prediction2[0]/total}"
+        output = [
+            f"{team2} is more likely to win. With a win percentage of {prediction2[0]/total}"
+        ]
+        return [html.P(out, className="center") for out in output]
 
 
 @callback(
@@ -575,7 +586,7 @@ def predict_championship(team_name):
         f"Probability of {team_name} winning Championship is {pow(prediction, 6)}",
     ]
 
-    return [html.P(prob) for prob in probabilities]
+    return [html.P(prob, className="center") for prob in probabilities]
 
 
 @callback(
@@ -702,16 +713,16 @@ def predict_sweet_sixteen(
     prediction16 = model.predict(input_row16[features])[0]
 
     output = [
-        f"Probability of {team_name1} winning against {team_name2} {prediction1/(prediction1+prediction2)}",
-        f"Probability of {team_name3} winning against {team_name4} {prediction3/(prediction3+prediction4)}",
-        f"Probability of {team_name5} winning against {team_name6} {prediction5/(prediction5+prediction6)}",
-        f"Probability of {team_name7} winning against {team_name8} {prediction7/(prediction7+prediction8)}",
-        f"Probability of {team_name9} winning against {team_name10} {prediction9/(prediction9+prediction10)}",
-        f"Probability of {team_name11} winning against {team_name12} {prediction11/(prediction11+prediction12)}",
-        f"Probability of {team_name13} winning against {team_name14} {prediction13/(prediction13+prediction14)}",
-        f"Probability of {team_name15} winning against {team_name16} {prediction15/(prediction15+prediction16)}",
+        f"Probability of {team_name1} winning against {team_name2} is {prediction1/(prediction1+prediction2)}",
+        f"Probability of {team_name3} winning against {team_name4} is {prediction3/(prediction3+prediction4)}",
+        f"Probability of {team_name5} winning against {team_name6} is {prediction5/(prediction5+prediction6)}",
+        f"Probability of {team_name7} winning against {team_name8} is {prediction7/(prediction7+prediction8)}",
+        f"Probability of {team_name9} winning against {team_name10} is {prediction9/(prediction9+prediction10)}",
+        f"Probability of {team_name11} winning against {team_name12} is {prediction11/(prediction11+prediction12)}",
+        f"Probability of {team_name13} winning against {team_name14} is {prediction13/(prediction13+prediction14)}",
+        f"Probability of {team_name15} winning against {team_name16} is {prediction15/(prediction15+prediction16)}",
     ]
-    return [html.P(out) for out in output]
+    return [html.P(out, className="center") for out in output]
 
 
 @callback(
@@ -765,7 +776,7 @@ def predict_elite_eight(
         f"Probability of {team_name5} (seed 3) winning against {team_name6} (seed 6) {prediction5/(prediction5+prediction6)}",
         f"Probability of {team_name7} (seed 4) winning against {team_name8} (seed 5) {prediction7/(prediction7+prediction8)}",
     ]
-    return [html.P(out) for out in output]
+    return [html.P(out, className="center") for out in output]
 
 
 @callback(
@@ -809,7 +820,7 @@ def predict_final_four(
         f"Probability of {team_name1} winning against {team_name2} {prediction1/(prediction1+prediction2)}",
         f"Probability of {team_name3} winning against {team_name4} {prediction3/(prediction3+prediction4)}",
     ]
-    return [html.P(out) for out in output]
+    return [html.P(out, className="center") for out in output]
 
 
 @callback(
@@ -827,7 +838,33 @@ def predict_championship_game(team_name1, team_name2):
     output = [
         f"Probability of {team_name1} winning against {team_name2} {prediction1/(prediction1+prediction2)}",
     ]
-    return [html.P(out) for out in output]
+    return [html.P(out, className="center") for out in output]
+
+
+@callback(
+    Output("championship-game-graph", "figure"),
+    Input("championship-1", "value"),
+    Input("championship-2", "value"),
+)
+def update_championship(team1, team2):
+    # Predict the outcome of a match between two teams
+    input_row1 = team_avg[team_avg["Team Name"] == team1]
+    prediction1 = model.predict(input_row1[features])
+    input_row2 = team_avg[team_avg["Team Name"] == team2]
+    prediction2 = model.predict(input_row2[features])
+    total = prediction1[0] + prediction2[0]
+    return {
+        "data": [
+            {
+                "x": [team1, team2],
+                "y": [prediction1[0] / total, prediction2[0] / total],
+                "type": "bar",
+            }
+        ],
+        "layout": {
+            "title": f"{team1} vs {team2} Prediction",
+        },
+    }
 
 
 # run the app

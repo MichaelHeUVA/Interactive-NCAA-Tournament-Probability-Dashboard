@@ -43,6 +43,9 @@ python3 app.py
 -   My app employs a linear regression model to learn the relationship between various basketball game statistics and the outcome (Win/Loss).
 -   Data is split into training and testing sets.
 -   Accuracy and mean squared error are calculated for model evaluation.
+-   The model is evaulated using OLS regression and the R-squared value is calculated.
+-   Multiple models were built and tested to determine the best model for predicting game outcomes.
+-   Full model evaluation is available in model.ipynb
 
 # Team Information
 
